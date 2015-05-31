@@ -81,7 +81,7 @@
     <!-- Generate the thrift gen-java source -->
     <!-- exec executable="../../compiler/cpp/thrift" failonerror="true" -->
     <exec executable="/usr/bin/thrift" failonerror="true" >
-      <arg line="--gen java -r tutorial.thrift"/>
+      <arg line="--gen java -r a1.thrift"/>
     </exec>
   </target>
 
@@ -89,7 +89,7 @@
     <echo>tutorial client simple:</echo>
     <java classname="TestClient"
       classpathref="tutorial.classpath" failonerror="true">
-      <arg line="simple ecelinux6 1942 password 10"/>
+      <arg line="simple ecelinux6 1942 1943 password 10"/>
     </java>
   </target>
 
@@ -104,10 +104,18 @@
   <target name="tutorialserver" description="Run a tutorial server" depends="">
       <java classname="BEServer" fork="true"
         classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
-      <arg line="1942"/>
+      <arg line="1942 1943"/>
 
             </java>
   </target>
+  <target name="feserver" description="Run a tutorial server" depends="">
+      <java classname="FEServer" fork="true"
+        classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
+      <arg line="1940 1941"/>
+
+            </java>
+  </target>
+
 
   <target name="clean">
     <delete dir="${build}" />
