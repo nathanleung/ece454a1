@@ -26,7 +26,7 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 
-import org.apache.thrift.TMultiplexedProcessor;
+import org.apache.thrift.TProcessor;
 // Generated code
 import ece454750s15a1.*;
 
@@ -38,44 +38,54 @@ public class BEServer {
   public static BEManagementHandler handlerMgmt;
   public static BEPasswordHandler handlerPwd;
 
-  public static TMultiplexedProcessor processor = new TMultiplexedProcessor();
+  public static TProcessor processor;
+  public static A1Management.Processor processorMgmt;
+  public static A1Password.Processor processorPwd;
 
   public static void main(String [] args) {
     try {
-  if(args.length != 1){
+  if(args.length != 2){
     System.out.println("specify the port number");
   }
-  final String portNum = args[0];
+  final String pport = args[0];
+  final String mport = args[1];
 
   handlerPwd = new BEPasswordHandler();
   handlerMgmt = new BEManagementHandler(handlerPwd);
+  processorMgmt = new A1Management.Processor(handlerMgmt);
+  processorPwd = new A1Password.Processor(handlerPwd);
+  // processor.registerProcessor(
+  //       "A1Management",
+  //       new A1Management.Processor(handlerMgmt));
+  // processor.registerProcessor(
+  //       "A1Password",
+  //       new A1Password.Processor(handlerPwd));
 
-  processor.registerProcessor(
-        "A1Management",
-        new A1Management.Processor(handlerMgmt));
-  processor.registerProcessor(
-        "A1Password",
-        new A1Password.Processor(handlerPwd));
-
-      Runnable simple = new Runnable() {
+      Runnable pwdRun = new Runnable() {
         public void run() {
-          simple(processor, portNum);
+          simple(processorPwd, pport);
         }
-      };      
+      };   
+      Runnable mgmtRun = new Runnable() {
+        public void run() {
+          simple(processorMgmt, mport);
+        }
+      };     
 
-      new Thread(simple).start();
+      new Thread(pwdRun).start();
+      new Thread(mgmtRun).start();
     } catch (Exception x) {
       x.printStackTrace();
     }
   }
 
-  public static void simple(TMultiplexedProcessor processor, String portNum) {
+  public static void simple(TProcessor processor, String portNum) {
     try {
       TServerTransport serverTransport = new TServerSocket(Integer.parseInt(portNum));
       TServer server = new TSimpleServer(
               new Args(serverTransport).processor(processor));
 
-      System.out.println("Starting the simple server...");
+      System.out.println("Starting the simple server..."+portNum);
       server.serve();
     } catch (Exception e) {
       e.printStackTrace();

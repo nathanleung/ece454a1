@@ -35,30 +35,40 @@ import java.util.ArrayList;
 public class TestClient {
   public static void main(String [] args) {
 
-    if (args.length != 5 || !args[0].contains("simple")) {
+    if (args.length != 6 || !args[0].contains("simple")) {
       System.out.println("Please enter 'simple' ");
       System.exit(0);
     }
 
     try {
-      String password = args[3];
-      Short logRounds = Short.parseShort(args[4]);
+      String host = args[1];
+      String pport = args[2];
+      String mport = args[3];
+      String password = args[4];
+      Short logRounds = Short.parseShort(args[5]);
       TTransport transport;
-      transport = new TSocket(args[1], Integer.parseInt(args[2]));
+      transport = new TSocket(host, Integer.parseInt(pport));
       transport.open();
 
-      TProtocol protocol = new  TBinaryProtocol(transport);
+      TTransport transportMgmt;
+      transportMgmt = new TSocket(host, Integer.parseInt(mport));
+      transportMgmt.open();
 
-      TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, "A1Management");
-      A1Management.Client client = new A1Management.Client(mp);
+      TProtocol protocol = new  TBinaryProtocol(transport);
+      TProtocol protocol2 = new  TBinaryProtocol(transportMgmt);
+      A1Password.Client clientPwd = new A1Password.Client(protocol);
+      A1Management.Client clientMgmt = new A1Management.Client(protocol2);
+      // TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, "A1Management");
+      // A1Management.Client client = new A1Management.Client(mp);
       
-      TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, "A1Password");
-      A1Password.Client clientPassword = new A1Password.Client(mp2);
+      // TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, "A1Password");
+      // A1Password.Client clientPassword = new A1Password.Client(mp2);
       
-      perform(client);
-      performPwd(clientPassword, password, logRounds);
+      perform(clientMgmt);
+      performPwd(clientPwd, password, logRounds);
 
       transport.close();
+      transportMgmt.close();
     } catch (TException x) {
       x.printStackTrace();
     } 

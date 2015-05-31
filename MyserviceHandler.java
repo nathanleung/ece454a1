@@ -20,30 +20,28 @@
 import org.apache.thrift.TException;
 
 // Generated code
-import ece454750s15a1.*;
+import tutorial.*;
 
 import java.util.HashMap;
 
 public class MyserviceHandler implements Myservice.Iface {
 
   private HashMap<Integer,Item> map;
-  //private int before;
-  //private int after;
+
   public MyserviceHandler() {
     map = new HashMap<Integer, Item>();
-    //before = 0;
-    //after = 0;
   }
-  // public int getBefore(){
-  //   return before;
-  // }
-  // public int getAfter(){
-  //   return after;
-  // }
+
   public int add(int n1, int n2) {
-    //before++;
     System.out.println("add(" + n1 + "," + n2 + ")");
-    //after++;
+    return n1 + n2;
+  }
+
+  public int DelayAdd(int n1, int n2, int delay) {
+    System.out.println("Sleep " + delay + " seconds.");
+    try{Thread.sleep(delay * 1000);}catch(InterruptedException e){System.out.println(e);}
+
+    System.out.println("Delayadd(" + n1 + "," + n2 + ")");
     return n1 + n2;
   }
 
