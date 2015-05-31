@@ -29,15 +29,15 @@ import java.util.Date;
 
 public class BEManagementHandler implements A1Management.Iface {
 
-  private HashMap<Integer,PerfCounters> map;
+  //private HashMap<Integer,PerfCounters> map;
   private Date startedUp = new Date();
-  public static MyserviceHandler handler;
+  public static BEPasswordHandler handler;
   // public BEManagementHandler() {
   //   map = new HashMap<Integer, PerfCounters>();
   // }
-  public BEManagementHandler(MyserviceHandler serviceHandler) {
-    map = new HashMap<Integer, PerfCounters>();
-    this.handler = serviceHandler;
+  public BEManagementHandler(BEPasswordHandler pwdHandler) {
+    //map = new HashMap<Integer, PerfCounters>();
+    this.handler = pwdHandler;
   }
   public PerfCounters getPerfCounters (){
     Date currentTime = new Date();

@@ -35,46 +35,33 @@ import java.util.ArrayList;
 public class TestClient {
   public static void main(String [] args) {
 
-    if (args.length != 3 || !args[0].contains("simple")) {
+    if (args.length != 5 || !args[0].contains("simple")) {
       System.out.println("Please enter 'simple' ");
       System.exit(0);
     }
 
     try {
+      String password = args[3];
+      Short logRounds = Short.parseShort(args[4]);
       TTransport transport;
       transport = new TSocket(args[1], Integer.parseInt(args[2]));
       transport.open();
 
       TProtocol protocol = new  TBinaryProtocol(transport);
-      //A1Management.Client client = new A1Management.Client(protocol);
+
       TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, "A1Management");
       A1Management.Client client = new A1Management.Client(mp);
       
-      TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, "Myservice");
-      Myservice.Client clientService = new Myservice.Client(mp2);
+      TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, "A1Password");
+      A1Password.Client clientPassword = new A1Password.Client(mp2);
       
-      performService(clientService);
       perform(client);
+      performPwd(clientPassword, password, logRounds);
 
       transport.close();
     } catch (TException x) {
       x.printStackTrace();
     } 
-  }
-  private static void performService(Myservice.Client client) throws TException
-  {
-
-    int sum = client.add(2,7);
-    System.out.println("2+7=" + sum);
-
-    Item item = new Item();
-    item.key = 100;
-    item.value = "Hello World!";
-
-    client.putItem(item);
-    Item another_item = client.getItem(100);
-    
-    System.out.println("Another_item value: " + another_item.value);
   }
   private static void perform(A1Management.Client client) throws TException
   {
@@ -89,5 +76,17 @@ public class TestClient {
 
     perfCounts = client.getPerfCounters();
     System.out.println("numSecondsUp: "+perfCounts.numSecondsUp);
+  }
+  private static void performPwd(A1Password.Client client, String pwd, Short logRou) throws TException
+  { 
+    System.out.println("Hashing Password.......");
+    String hashedPwd = client.hashPassword(pwd, logRou);
+    System.out.println("Hashed Password: " +  hashedPwd);
+    System.out.println("Checking Password......");
+    boolean match = client.checkPassword(pwd, hashedPwd);
+    if (match)
+      System.out.println("Password and Hashed Password matched.");
+    else
+      System.out.println("Password and Hashed Password DON'T matched.");
   }
 }

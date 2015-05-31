@@ -25,13 +25,16 @@
   <property name="build" location="build" />
 
   <path id="libs.classpath">
-    <fileset dir="../../lib/java/build">
+	<fileset dir="../lib">
+	<include name="*.jar"/>
+	</fileset>
+    <!--<fileset dir="../../lib/java/build">
       <include name="*.jar" />
       <exclude name="-test.jar" />
     </fileset>
     <fileset dir="../../lib/java/build/lib">
       <include name="*.jar" />
-    </fileset>
+    </fileset>-->
   </path>
   <path id="build.classpath">
     <path refid="libs.classpath" />
@@ -86,7 +89,7 @@
     <echo>tutorial client simple:</echo>
     <java classname="TestClient"
       classpathref="tutorial.classpath" failonerror="true">
-      <arg line="simple eceubuntu 1942"/>
+      <arg line="simple ecelinux6 1942 password 10"/>
     </java>
   </target>
 
@@ -108,7 +111,7 @@
 
   <target name="clean">
     <delete dir="${build}" />
-    <delete dir="${gen}"/>
+    <!--<delete dir="${gen}"/>-->
     <delete file="tutorial.jar" />
   </target>
 

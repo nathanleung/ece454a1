@@ -34,27 +34,28 @@ import java.util.HashMap;
 
 public class BEServer {
 
+  
   public static BEManagementHandler handlerMgmt;
+  public static BEPasswordHandler handlerPwd;
 
-  public static MyserviceHandler handler;
-  //public static A1Management.Processor processor;
   public static TMultiplexedProcessor processor = new TMultiplexedProcessor();
+
   public static void main(String [] args) {
     try {
   if(args.length != 1){
     System.out.println("specify the port number");
   }
   final String portNum = args[0];
-      handler = new MyserviceHandler();
-      handlerMgmt = new BEManagementHandler(handler);
-      //processor = new A1Management.Processor(handler);
 
-processor.registerProcessor(
-        "Myservice",
-        new Myservice.Processor(handler));
-processor.registerProcessor(
+  handlerPwd = new BEPasswordHandler();
+  handlerMgmt = new BEManagementHandler(handlerPwd);
+
+  processor.registerProcessor(
         "A1Management",
         new A1Management.Processor(handlerMgmt));
+  processor.registerProcessor(
+        "A1Password",
+        new A1Password.Processor(handlerPwd));
 
       Runnable simple = new Runnable() {
         public void run() {
