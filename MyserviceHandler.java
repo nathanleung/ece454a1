@@ -29,13 +29,17 @@ public class MyserviceHandler implements Myservice.Iface {
   private HashMap<Integer,Item> map;
   private int before;
   private int after;
-
   public MyserviceHandler() {
     map = new HashMap<Integer, Item>();
     before = 0;
     after = 0;
   }
-
+  public int getBefore(){
+    return before;
+  }
+  public int getAfter(){
+    return after;
+  }
   public int add(int n1, int n2) {
     before++;
     System.out.println("add(" + n1 + "," + n2 + ")");

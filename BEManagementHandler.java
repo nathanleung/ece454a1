@@ -31,16 +31,21 @@ public class BEManagementHandler implements A1Management.Iface {
 
   private HashMap<Integer,PerfCounters> map;
   private Date startedUp = new Date();
-  public BEManagementHandler() {
+  public static MyserviceHandler handler;
+  // public BEManagementHandler() {
+  //   map = new HashMap<Integer, PerfCounters>();
+  // }
+  public BEManagementHandler(MyserviceHandler serviceHandler) {
     map = new HashMap<Integer, PerfCounters>();
+    this.handler = serviceHandler;
   }
   public PerfCounters getPerfCounters (){
     Date currentTime = new Date();
     long secondsDiff = (currentTime.getTime()-startedUp.getTime())/1000;
     PerfCounters perfCounts = new PerfCounters();
     perfCounts.numSecondsUp = (int)secondsDiff;
-    perfCounts.numRequestsReceived = 10;
-    perfCounts.numRequestsCompleted = 15;
+    perfCounts.numRequestsReceived = handler.getBefore();
+    perfCounts.numRequestsCompleted = handler.getAfter();
     return perfCounts;
   }
   public List<String> getGroupMembers (){
@@ -49,19 +54,5 @@ public class BEManagementHandler implements A1Management.Iface {
       members.add("swmaung");
       return members;
   }
-  /*public int add(int n1, int n2) {
-    System.out.println("add(" + n1 + "," + n2 + ")");
-    return n1 + n2;
-  }
-
-  public void putItem(Item item) {
-    System.out.println("putItem key(" + item.key + ")");
-    map.put(item.key, item);
-  }
-
-  public Item getItem(int key) {
-    System.out.println("getItem(" + key + ")");
-    return map.get(key);
-  }*/
 }
 

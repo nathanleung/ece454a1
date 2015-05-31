@@ -26,6 +26,7 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.protocol.TProtocol;
 
 import java.util.List;
@@ -45,8 +46,14 @@ public class TestClient {
       transport.open();
 
       TProtocol protocol = new  TBinaryProtocol(transport);
-      A1Management.Client client = new A1Management.Client(protocol);
-
+      //A1Management.Client client = new A1Management.Client(protocol);
+      TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, "A1Management");
+      A1Management.Client client = new A1Management.Client(mp);
+      
+      TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, "Myservice");
+      Myservice.Client clientService = new Myservice.Client(mp2);
+      
+      performService(clientService);
       perform(client);
 
       transport.close();
@@ -54,11 +61,10 @@ public class TestClient {
       x.printStackTrace();
     } 
   }
-
-  private static void perform(A1Management.Client client) throws TException
+  private static void performService(Myservice.Client client) throws TException
   {
 
-    /*int sum = client.add(2,7);
+    int sum = client.add(2,7);
     System.out.println("2+7=" + sum);
 
     Item item = new Item();
@@ -68,7 +74,10 @@ public class TestClient {
     client.putItem(item);
     Item another_item = client.getItem(100);
     
-    System.out.println("Another_item value: " + another_item.value);*/
+    System.out.println("Another_item value: " + another_item.value);
+  }
+  private static void perform(A1Management.Client client) throws TException
+  {
 
     PerfCounters perfCounts = client.getPerfCounters();
     System.out.println("numSecondsUp: "+perfCounts.numSecondsUp);

@@ -26,6 +26,7 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 
+import org.apache.thrift.TMultiplexedProcessor;
 // Generated code
 import ece454750s15a1.*;
 
@@ -33,18 +34,27 @@ import java.util.HashMap;
 
 public class BEServer {
 
-  public static BEManagementHandler handler;
+  public static BEManagementHandler handlerMgmt;
 
-  public static A1Management.Processor processor;
-
+  public static MyserviceHandler handler;
+  //public static A1Management.Processor processor;
+  public static TMultiplexedProcessor processor = new TMultiplexedProcessor();
   public static void main(String [] args) {
     try {
   if(args.length != 1){
     System.out.println("specify the port number");
   }
   final String portNum = args[0];
-      handler = new BEManagementHandler();
-      processor = new A1Management.Processor(handler);
+      handler = new MyserviceHandler();
+      handlerMgmt = new BEManagementHandler(handler);
+      //processor = new A1Management.Processor(handler);
+
+processor.registerProcessor(
+        "Myservice",
+        new Myservice.Processor(handler));
+processor.registerProcessor(
+        "A1Management",
+        new A1Management.Processor(handlerMgmt));
 
       Runnable simple = new Runnable() {
         public void run() {
@@ -58,7 +68,7 @@ public class BEServer {
     }
   }
 
-  public static void simple(A1Management.Processor processor, String portNum) {
+  public static void simple(TMultiplexedProcessor processor, String portNum) {
     try {
       TServerTransport serverTransport = new TServerSocket(Integer.parseInt(portNum));
       TServer server = new TSimpleServer(
