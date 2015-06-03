@@ -92,6 +92,14 @@
       <arg line="simple ecelinux6 1942 1943 password 10"/>
     </java>
   </target>
+  <target name="feclient" description="Run a tutorial client" depends="">
+    <echo>tutorial client simple:</echo>
+    <java classname="TestClient"
+      classpathref="tutorial.classpath" failonerror="true">
+      <arg line="simple ecelinux6 1940 1941 password 10"/>
+    </java>
+  </target>
+
 
   <!-- <target name="remoteclient" description="Run a tutorial client" >
     <echo>tutorial client simple:</echo>
