@@ -14,9 +14,14 @@ import org.apache.thrift.protocol.TProtocol;
 import java.util.Date;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+
 public class FEPasswordHandler implements A1Password.Iface {
   private int before;
   private int after;
+  //public static FEManagmentHandler handler;
   public FEPasswordHandler() {
     before = 0;
     after = 0;
@@ -27,10 +32,19 @@ public class FEPasswordHandler implements A1Password.Iface {
   public int getAfter(){
     return after;
   }
+  // public void setMgmtHandler(FEManagmentHandler handler){
+  //   this.handler = handler;
+  // }
 
   public String hashPassword (String password, short logRounds) throws
   ServiceUnavailableException, org.apache.thrift.TException {
     before++;
+    // String host;
+    // String pport;
+    // for (ConcurrentMap.Entry<String, List<String>> e: liveBEInfo.entrySet()){
+    //   host = e.getKey();
+    //   pport = e.getVal().get(0);
+    // }
     String host = "ecelinux6"; //sai's data from Hashmap
     String pport= "1942";  //same as above- figure out how to distribute evenly
     TTransport transport;

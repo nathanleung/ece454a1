@@ -35,5 +35,8 @@ public class BEManagementHandler implements A1Management.Iface {
       members.add("swmaung");
       return members;
   }
+
+  public void registrar(String host, String pport, String mport, String ncores) {
+  }
 }
 

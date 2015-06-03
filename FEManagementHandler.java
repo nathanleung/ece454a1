@@ -8,10 +8,15 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+
 public class FEManagementHandler implements A1Management.Iface {
 
   private Date startedUp = new Date();
   public static FEPasswordHandler handler;
+  public ConcurrentMap<String, List<String>> liveBEInfo = new ConcurrentHashMap();
 
   public FEManagementHandler(FEPasswordHandler pwdHandler) {
     this.handler = pwdHandler;
@@ -32,5 +37,15 @@ public class FEManagementHandler implements A1Management.Iface {
       members.add("swmaung");
       return members;
   }
+  public void registrar(String host, String pport, String mport, String ncores) {
+    List<String> valSet = new ArrayList<String>();
+    valSet.add(pport);
+    valSet.add(mport);
+    valSet.add(ncores);
+    liveBEInfo.put(host, valSet);
+    for (ConcurrentMap.Entry<String, List<String>> e: liveBEInfo.entrySet())
+      System.out.println(e.getKey() + "," + e.getValue());
+  }
+
 }
 

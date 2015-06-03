@@ -33,6 +33,7 @@ public class FEServer {
 
   handlerPwd = new FEPasswordHandler();
   handlerMgmt = new FEManagementHandler(handlerPwd);
+  //handlerPwd.setMgmtHandler(handlerMgmt);
   processorMgmt = new A1Management.Processor(handlerMgmt);
   processorPwd = new A1Password.Processor(handlerPwd);
   // processor.registerProcessor(
