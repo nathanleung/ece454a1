@@ -85,14 +85,24 @@
     </exec>
   </target>
 
-  <target name="tutorialclient" description="Run a tutorial client" depends="">
+  <target name="beclient" description="Run a be connected client" depends="">
     <echo>tutorial client simple:</echo>
-    <java classname="TestClient"
+    <java classname="MgmtTestClient"
       classpathref="tutorial.classpath" failonerror="true">
       <arg line="simple ecelinux6 1942 1943 password 10"/>
     </java>
   </target>
-  <target name="feclient" description="Run a tutorial client" depends="">
+
+  <target name="beclient2" description="Run a be connected client" depends="">
+    <echo>tutorial client simple:</echo>
+    <java classname="MgmtTestClient"
+      classpathref="tutorial.classpath" failonerror="true">
+      <arg line="simple ecelinux6 1944 1945 password 10"/>
+    </java>
+  </target>
+
+
+  <target name="feclient" description="Run a frontend connected client" depends="">
     <echo>tutorial client simple:</echo>
     <java classname="TestClient"
       classpathref="tutorial.classpath" failonerror="true">
@@ -100,25 +110,33 @@
     </java>
   </target>
 
-
-  <!-- <target name="remoteclient" description="Run a tutorial client" >
+  <target name="femgmtclient" description="Test perf counters for fe client" depends="">
     <echo>tutorial client simple:</echo>
-    <java classname="JavaClient2"
+    <java classname="MgmtTestClient"
       classpathref="tutorial.classpath" failonerror="true">
-      <arg line="simple eceubuntu"/>
+      <arg line="simple ecelinux6 1940 1941 password 10"/>
     </java>
-  </target> -->
+  </target>
 
-  <target name="tutorialserver" description="Run a tutorial server" depends="">
+
+  <target name="beserver" description="Run a backend server" depends="">
       <java classname="BEServer" fork="true"
         classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
-      <arg line="1942 1943"/>
+      <arg line="ecelinux6 1942 1943 2 ecelinux6 1941"/>
 
             </java>
   </target>
-  <target name="feserver" description="Run a tutorial server" depends="">
-      <java classname="FEServer" fork="true"
+  <target name="beserver2" description="Run a 2nd backend server" depends="">
+      <java classname="BEServer" fork="true"
         classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
+      <arg line="ecelinux6 1944 1945 2 ecelinux6 1941"/>
+
+            </java>
+  </target>
+
+  <target name="feserver" description="Run a fe server" depends="">
+      <java classname="FEServer" fork="true"
+        classpathref="tutorial.classpath" failonerror="false" output="${build}/log/fetutorial.log">
       <arg line="1940 1941"/>
 
             </java>

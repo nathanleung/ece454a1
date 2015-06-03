@@ -11,7 +11,7 @@ import org.apache.thrift.protocol.TProtocol;
 import java.util.List;
 import java.util.ArrayList;
 
-public class TestClient {
+public class MgmtTestClient {
   public static void main(String [] args) {
 
     if (args.length != 6 || !args[0].contains("simple")) {
@@ -43,7 +43,7 @@ public class TestClient {
       // TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, "A1Password");
       // A1Password.Client clientPassword = new A1Password.Client(mp2);
       
-      performPwd(clientPwd, password, logRounds);
+      //performPwd(clientPwd, password, logRounds);
       perform(clientMgmt);
 
       transport.close();

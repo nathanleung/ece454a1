@@ -42,9 +42,11 @@ public class FEManagementHandler implements A1Management.Iface {
     valSet.add(pport);
     valSet.add(mport);
     valSet.add(ncores);
-    liveBEInfo.put(host, valSet);
-    for (ConcurrentMap.Entry<String, List<String>> e: liveBEInfo.entrySet())
+    liveBEInfo.put(host+"_"+mport, valSet);
+    for (ConcurrentMap.Entry<String, List<String>> e: liveBEInfo.entrySet()){
       System.out.println(e.getKey() + "," + e.getValue());
+    }
+    handler.syncBEInfo(liveBEInfo);
   }
 
 }

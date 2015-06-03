@@ -36,12 +36,6 @@ public class FEServer {
   //handlerPwd.setMgmtHandler(handlerMgmt);
   processorMgmt = new A1Management.Processor(handlerMgmt);
   processorPwd = new A1Password.Processor(handlerPwd);
-  // processor.registerProcessor(
-  //       "A1Management",
-  //       new A1Management.Processor(handlerMgmt));
-  // processor.registerProcessor(
-  //       "A1Password",
-  //       new A1Password.Processor(handlerPwd));
 
       Runnable pwdRun = new Runnable() {
         public void run() {
