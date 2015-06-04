@@ -1,6 +1,7 @@
+package ece454750s15a1;
+
 import org.apache.thrift.TException;
 
-// Generated code
 import ece454750s15a1.*;
 
 import java.util.HashMap;
