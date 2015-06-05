@@ -63,13 +63,13 @@
   <target name="tutorial" description="Run the tutorial" depends="compile" >
     <jar jarfile="ece454750s15a1.jar" basedir="${build}"/>
     <parallel>
-      <java classname="BEServer" fork="true" timeout="10000"
+      <java classname="ece454750s15a1.BEServer" fork="true" timeout="10000"
         classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
       </java>
       <sequential>
         <sleep seconds="2"/>
         <echo>tutorial client simple:</echo>
-        <java classname="TestClient"
+        <java classname="ece454750s15a1.TestClient"
           classpathref="tutorial.classpath" failonerror="true">
           <arg line="simple"/>
         </java>
@@ -87,7 +87,7 @@
 
   <target name="beclient" description="Run a be connected client" depends="">
     <echo>tutorial client simple:</echo>
-    <java classname="MgmtTestClient"
+    <java classname="ece454750s15a1.MgmtTestClient"
       classpathref="tutorial.classpath" failonerror="true">
       <arg line="simple ecelinux6 1942 1943 password 10"/>
     </java>
@@ -95,7 +95,7 @@
 
   <target name="beclient2" description="Run a be connected client" depends="">
     <echo>tutorial client simple:</echo>
-    <java classname="MgmtTestClient"
+    <java classname="ece454750s15a1.MgmtTestClient"
       classpathref="tutorial.classpath" failonerror="true">
       <arg line="simple ecelinux6 1944 1945 password 10"/>
     </java>
@@ -104,15 +104,24 @@
 
   <target name="feclient" description="Run a frontend connected client" depends="">
     <echo>tutorial client simple:</echo>
-    <java classname="TestClient"
+    <java classname="ece454750s15a1.TestClient"
       classpathref="tutorial.classpath" failonerror="true">
       <arg line="simple ecelinux6 1940 1941 password 10"/>
     </java>
   </target>
 
+  <target name="parallelclient" description="Run a frontend in parallel" depends="">
+    <echo>tutorial client simple:</echo>
+    <java classname="ece454750s15a1.ParallelClient"
+      classpathref="tutorial.classpath" failonerror="true">
+      <arg line="simple ecelinux6 1940 1941"/>
+    </java>
+  </target>
+
+
   <target name="femgmtclient" description="Test perf counters for fe client" depends="">
     <echo>tutorial client simple:</echo>
-    <java classname="MgmtTestClient"
+    <java classname="ece454750s15a1.MgmtTestClient"
       classpathref="tutorial.classpath" failonerror="true">
       <arg line="simple ecelinux6 1940 1941 password 10"/>
     </java>
@@ -120,22 +129,28 @@
 
 
   <target name="beserver" description="Run a backend server" depends="">
-      <java classname="BEServer" fork="true"
+      <java classname="ece454750s15a1.BEServer" fork="true"
         classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
       <arg line="ecelinux6 1942 1943 2 ecelinux6 1941"/>
-
             </java>
   </target>
   <target name="beserver2" description="Run a 2nd backend server" depends="">
-      <java classname="BEServer" fork="true"
+      <java classname="ece454750s15a1.BEServer" fork="true"
         classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
       <arg line="ecelinux6 1944 1945 2 ecelinux6 1941"/>
-
             </java>
   </target>
 
+  <target name="beserver3" description="Run a 3rd backend server" depends="">
+      <java classname="ece454750s15a1.BEServer" fork="true"
+        classpathref="tutorial.classpath" failonerror="false" output="${build}/log/tutorial.log">
+      <arg line="ecelinux6 1946 1947 2 ecelinux6 1941"/>
+            </java>
+  </target>
+
+
   <target name="feserver" description="Run a fe server" depends="">
-      <java classname="FEServer" fork="true"
+      <java classname="ece454750s15a1.FEServer" fork="true"
         classpathref="tutorial.classpath" failonerror="false" output="${build}/log/fetutorial.log">
       <arg line="1940 1941"/>
 

@@ -38,15 +38,6 @@ public class BEManagementHandler implements A1Management.Iface {
   }
 
   public void registrar(String host, String pport, String mport, String ncores) {
-    List<String> valSet = new ArrayList<String>();
-    valSet.add(pport);
-    valSet.add(mport);
-    valSet.add(ncores);
-    liveBEInfo.put(host+"_"+mport, valSet);
-    for (ConcurrentMap.Entry<String, List<String>> e: liveBEInfo.entrySet()){
-      System.out.println(e.getKey() + "," + e.getValue());
-    }
-    handler.syncBEInfo(liveBEInfo);
   }
 }
 

@@ -21,20 +21,22 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
 import java.util.Random;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FEPasswordHandler implements A1Password.Iface {
-  private int before;
-  private int after;
+  private AtomicInteger before;
+  private AtomicInteger after;
   public ConcurrentMap<String, List<String>> liveBEInfo = new ConcurrentHashMap();
   public FEPasswordHandler() {
-    before = 0;
-    after = 0;
+    before = new AtomicInteger();
+    after = new AtomicInteger();
   }
   public int getBefore(){
-    return before;
+    return before.get();
   }
   public int getAfter(){
-    return after;
+    return after.get();
   }
   public void syncBEInfo(ConcurrentMap<String, List<String>> mgmtBEInfo){
     liveBEInfo = mgmtBEInfo;
@@ -58,23 +60,45 @@ public class FEPasswordHandler implements A1Password.Iface {
       System.out.println(e.getKey());
     }
   }
+  public boolean waitSixtySeconds(){
+      System.out.println("In timer");
+      Date startTime = new Date();
+      Date currentTime = new Date();
+      while(((currentTime.getTime()-startTime.getTime())/1000) < 60){
+        try {
+            Thread.sleep(1000);                 //1000 milliseconds is one second.
+        } catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        if(liveBEInfo.size() > 0){
+          return true;
+        }
+        currentTime = new Date();
+      }
+      return false;
+  }
 
   public String hashPassword (String password, short logRounds) throws
   ServiceUnavailableException, org.apache.thrift.TException {
-    before++;
+    before.getAndAdd(1);
     String hashed = getHash(password, logRounds);
-    after++;
+    after.getAndAdd(1);
     return hashed;
   }
 
   public String getHash(String password, short logRounds)throws
   ServiceUnavailableException, org.apache.thrift.TException{
     String hashed = "";
-    System.out.println("Checking nodes");
-    PrintBEEntries();
+    //System.out.println("Checking nodes");
+    //PrintBEEntries();
+    if(liveBEInfo.size() <= 0){
+      if(!waitSixtySeconds())
+          throw new ServiceUnavailableException("No service requests could be processed. Timeout at 1 minute");
+    }
     String randElement = getRandEntry(liveBEInfo);
     String host = randElement.split("_")[0];
     String pport = liveBEInfo.get(randElement).get(0);
+
     TTransport transport;
     try{
       transport = new TSocket(host, Integer.parseInt(pport));
@@ -85,6 +109,7 @@ public class FEPasswordHandler implements A1Password.Iface {
       transport.close();
       return hashed;
     }catch(TTransportException e){
+       e.printStackTrace();
        liveBEInfo.remove(randElement);
        System.out.println("removing node");
        PrintBEEntries();
@@ -93,35 +118,43 @@ public class FEPasswordHandler implements A1Password.Iface {
        }else{
           System.out.println("All BE Server down");
           //somehow tell client
+          if(waitSixtySeconds()){
+            return getHash(password, logRounds);
+          }else{
+            throw new ServiceUnavailableException("No service requests could be processed. Timeout at 1 minute");
+          }
        }
     }
-    return hashed;
+    //return hashed;
   }
 
   public boolean checkPassword(String password, String hash) throws
-  org.apache.thrift.TException {
-    before++;
+  ServiceUnavailableException, org.apache.thrift.TException {
+    before.getAndAdd(1);
     boolean isPwdCorrect = getCheck(password, hash);
     
     if(isPwdCorrect){
-	  after++;
+	  after.getAndAdd(1);
       return true;
     }
     else{
-      after++;
+      after.getAndAdd(1);
       return false;
     }
   }
   public boolean getCheck(String password, String hash)throws
-  org.apache.thrift.TException{
+  ServiceUnavailableException, org.apache.thrift.TException{
     boolean isPwdCorrect = false;
-    System.out.println("Checking nodes");
-    PrintBEEntries();
+    //System.out.println("Checking nodes");
+    //PrintBEEntries();
+    if(liveBEInfo.size() <= 0){
+      if(!waitSixtySeconds())
+          throw new ServiceUnavailableException("No service requests could be processed. Timeout at 1 minute");
+    }
     String randElement = getRandEntry(liveBEInfo);
     String host = randElement.split("_")[0];
     String pport = liveBEInfo.get(randElement).get(0);
-    //String host = "ecelinux6"; //sai's data from Hashmap
-    //String pport= "1942";  //same as above- figure out how to distribute evenly
+
     TTransport transport;
     try{
     transport = new TSocket(host, Integer.parseInt(pport));
@@ -132,6 +165,7 @@ public class FEPasswordHandler implements A1Password.Iface {
     transport.close();
     return isPwdCorrect;
     }catch(TTransportException e){
+       e.printStackTrace();
        liveBEInfo.remove(randElement);
        System.out.println("removing node");
        PrintBEEntries();
@@ -140,9 +174,14 @@ public class FEPasswordHandler implements A1Password.Iface {
        }else{
           System.out.println("All BE Server down");
           //somehow tell client
+          if(waitSixtySeconds()){
+            return getCheck(password, hash);
+          }else{
+            throw new ServiceUnavailableException("No service requests could be processed. Timeout at 1 minute");
+          }
        }
     }
-    return isPwdCorrect;
+    //return isPwdCorrect;
   }
 } 
 
