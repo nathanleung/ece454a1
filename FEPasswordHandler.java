@@ -43,13 +43,19 @@ public class FEPasswordHandler implements A1Password.Iface {
   }
   public String getRandEntry(ConcurrentMap<String, List<String>> beInfo){
     Random rand = new Random();
-    int randomNum = rand.nextInt(beInfo.size());
-    int i = 0;
+    double randomNum = rand.nextDouble();
+    double currProb = 0;
+    int  totalCores = 0;
     for (ConcurrentMap.Entry<String, List<String>> e: beInfo.entrySet()){
-      if(randomNum == i){
+    	totalCores+= Integer.parseInt(e.getValue().get(2));
+    }
+    for (ConcurrentMap.Entry<String, List<String>> e: beInfo.entrySet()){
+    	double coreProb = Integer.parseInt(e.getValue().get(2))/(double)totalCores;
+    	System.out.println("randomNum: "+randomNum+", coreProb: "+coreProb+", totalCores: "+totalCores);
+      if(randomNum >= currProb && randomNum < currProb+coreProb){
         return e.getKey();
       }else{
-        i++;
+        currProb+=coreProb;
       }
     }
     return "";
