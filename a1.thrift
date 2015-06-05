@@ -21,5 +21,6 @@ service A1Password {
 service A1Management {
     PerfCounters getPerfCounters (),
     list<string> getGroupMembers (),
-    void registrar(1:string host, 2:string pport, 3:string mport, 4:string ncores)
+    void beToFERegistrar(1:string host, 2:string pport, 3:string mport, 4:string ncores),
+    void feToFERegistrar(1:string host, 2:string pport, 3:string mport, 4:string ncores)
 }

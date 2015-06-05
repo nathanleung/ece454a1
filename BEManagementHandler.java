@@ -37,7 +37,9 @@ public class BEManagementHandler implements A1Management.Iface {
       return members;
   }
 
-  public void registrar(String host, String pport, String mport, String ncores) {
+  public void beToFERegistrar(String host, String pport, String mport, String ncores) {
+  }
+   public void feToFERegistrar(String host, String pport, String mport, String ncores) {
   }
 }
 

@@ -25,6 +25,7 @@ import org.apache.thrift.TProcessor;
 //import ece454750s15a1.*;
 
 import java.util.HashMap;
+import java.util.*;
 
 public class BEServer {
 
@@ -38,23 +39,68 @@ public class BEServer {
 
   public static void main(String [] args) {
     try {
-  if(args.length != 6){
-    System.out.println("specify the port number");
-  }
-  final String behost = args[0];
-  final String pport = args[1];
-  final String mport = args[2];
-  final String ncores = args[3];
+  // if(args.length != 6){
+  //   System.out.println("specify the port number");
+  // }
+  //final String behost = args[0];
+  //final String pport = args[1];
+  //final String mport = args[2];
+  //final String ncores = args[3];
 
-  final String fehost = args[4]; // port number to start the FENode
-  final String feport = args[5]; // port number that FESeed is listening
+  //final String fehost = args[4]; // port number to start the FENode
+  //final String feport = args[5]; // port number that FESeed is listening
 
-  // TTransport transport = new TSocket(fehost, Integer.parseInt(feport));
-  // transport.open();
-  // TProtocol protocol = new TBinaryProtocol(transport);
-  // A1Management.Client clientRegister = new A1Management.Client(protocol);
-  // clientRegister.registrar(behost, pport, mport, ncores);
-  // transport.close();
+  int i = 0;
+      String behost = "";
+      String pportTmp = "";
+      String mportTmp = "";
+      String ncores = "";
+      String seeds = "";
+
+      while (i < args.length) {
+        if(args[i].equals("-host"))
+          behost += args[i+1];
+        else if (args[i].equals("-pport"))
+          pportTmp += args[i+1];
+        else if (args[i].equals("-mport")) 
+          mportTmp += args[i+1];
+        else if (args[i].equals("-ncores"))
+          ncores += args[i+1];
+        else if (args[i].equals("-seeds"))
+          seeds += args[i+1];
+        i += 2;
+      }
+      List<String> seedsList = null;
+      final String pport = pportTmp;
+      final String mport = mportTmp;
+      if(seeds != ""){
+        seedsList = Arrays.asList(seeds.split(",")); 
+      }
+      System.out.print("FEHost: ");
+      System.out.println(behost);
+      System.out.print("pport: ");
+      System.out.println(pport);
+      System.out.print("mport: ");
+      System.out.println(mport);
+      System.out.print("ncores: ");
+      System.out.println(ncores);
+      if(seeds != ""){
+        for (int j=0; j<seedsList.size(); j++) {
+          String seed = seedsList.get(j);
+          int index = seed.indexOf(":"); 
+          String seedHost = seed.substring(0, index);
+          String seedPort = seed.substring(index+1);
+          System.out.print("Seed Host: "); 
+          System.out.println(seed.substring(0, index));
+          System.out.print("Seed Management Port: ");
+          System.out.println(seed.substring(index+1));
+        }
+      } 
+      //default at 0 for now
+      String seed = seedsList.get(0);
+      int index = seed.indexOf(":");
+      String seedHost = seed.substring(0, index);
+      String seedPort = seed.substring(index+1);
 
   handlerPwd = new BEPasswordHandler();
   handlerMgmt = new BEManagementHandler(handlerPwd);
@@ -78,22 +124,22 @@ public class BEServer {
       try {
         TProtocolFactory protocolFactory = new TBinaryProtocol.Factory();
         TAsyncClientManager clientManager = new TAsyncClientManager();
-        TNonblockingTransport transport = new TNonblockingSocket(fehost, Integer.parseInt(feport)); 
+        TNonblockingTransport transport = new TNonblockingSocket(seedHost, Integer.parseInt(seedPort)); 
 
         A1Management.AsyncClient client = new A1Management.AsyncClient(
             protocolFactory, clientManager, transport);
 
-        client.registrar(behost, pport, mport, ncores, new AddCallBack());
+        client.beToFERegistrar(behost, pport, mport, ncores, new AddCallBack());
         System.out.println("After Send Async call.");
 
-        int i = 0;
-        while (!finish) {  
-      try{Thread.sleep(1000);}catch(InterruptedException e){System.out.println(e);}
-            i++;    
-      System.out.println("Sleep " + i + " Seconds.");
-        }
+      //   int k = 0;
+      //   while (!finish) {  
+      // try{Thread.sleep(1000);}catch(InterruptedException e){System.out.println(e);}
+      //       k++;    
+      // System.out.println("Sleep " +k + " Seconds.");
+      //   }
 
-        System.out.println("Exiting client.");
+      //   System.out.println("Exiting client.");
 
       } catch (TException x) {
         x.printStackTrace();
@@ -121,9 +167,9 @@ public class BEServer {
   }
 
   static class AddCallBack 
-    implements AsyncMethodCallback<A1Management.AsyncClient.registrar_call> {
+    implements AsyncMethodCallback<A1Management.AsyncClient.beToFERegistrar_call> {
     
-    public void onComplete(A1Management.AsyncClient.registrar_call add_call) {
+    public void onComplete(A1Management.AsyncClient.beToFERegistrar_call add_call) {
         try {
             add_call.getResult();
             System.out.println("Add from server: " +"TEST");

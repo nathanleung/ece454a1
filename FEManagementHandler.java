@@ -18,6 +18,7 @@ public class FEManagementHandler implements A1Management.Iface {
   private Date startedUp = new Date();
   public static FEPasswordHandler handler;
   public ConcurrentMap<String, List<String>> liveBEInfo = new ConcurrentHashMap();
+  public ConcurrentMap<String, List<String>> liveFEInfo = new ConcurrentHashMap();
 
   public FEManagementHandler(FEPasswordHandler pwdHandler) {
     this.handler = pwdHandler;
@@ -38,16 +39,29 @@ public class FEManagementHandler implements A1Management.Iface {
       members.add("swmaung");
       return members;
   }
-  public void registrar(String host, String pport, String mport, String ncores) {
+  public void beToFERegistrar(String host, String pport, String mport, String ncores) {
     List<String> valSet = new ArrayList<String>();
     valSet.add(pport);
     valSet.add(mport);
     valSet.add(ncores);
     liveBEInfo.put(host+"_"+mport, valSet);
+    System.out.println("In BE Registrar Function");
     for (ConcurrentMap.Entry<String, List<String>> e: liveBEInfo.entrySet()){
       System.out.println(e.getKey() + "," + e.getValue());
     }
     handler.syncBEInfo(liveBEInfo);
+  }
+  public void feToFERegistrar(String host, String pport, String mport, String ncores) {
+    List<String> valSet = new ArrayList<String>();
+    valSet.add(pport);
+    valSet.add(mport);
+    valSet.add(ncores);
+    liveFEInfo.put(host+"_"+mport, valSet);
+    System.out.println("In FE Registrar Function");
+    for (ConcurrentMap.Entry<String, List<String>> e: liveFEInfo.entrySet()){
+      System.out.println(e.getKey() + "," + e.getValue());
+    }
+    //handler.syncBEInfo(liveBEInfo);
   }
 
 }
